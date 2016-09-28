@@ -36,9 +36,10 @@ public class LWF {
 
         for (File image : images) {
             System.out.println(image.getName());
-            String puntos = image.getName().substring(0, image.getName().length() - 3) + "pts";
-            System.out.println(puntos);
+            String puntos_file = image.getName().substring(0, image.getName().length() - 3) + "pts";
+            System.out.println(puntos_file);
             System.out.println("------------------------");
+            double[][][] puntos = leerpuntos(new File(urlHelen+"\\"+ puntos_file));
 //            Rect[] rectangles = detect_faces(image);
 //            for (Rect rectangle : rectangles) {
 //
@@ -63,6 +64,10 @@ public class LWF {
     }
 
     private static Rect[] detect_faces(File image) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private static double[][][] leerpuntos(File file) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
