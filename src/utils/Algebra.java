@@ -40,7 +40,7 @@ public class Algebra {
         
         double[] mires = new double[Ad[0].length];
         for (int i = 0; i < Ad[0].length; i++) {
-            mires[i] = res.get ;
+            mires[i] = res.get(i, 0)[0];
         }
         return mires;
     }
