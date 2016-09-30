@@ -5,6 +5,7 @@
  */
 package utils;
 
+import com.sun.javafx.scene.control.skin.FXVK;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -16,33 +17,12 @@ import org.opencv.core.Scalar;
  */
 public class Algebra {
 
-    public static double[] linear_solve(double[][] Ad, double[] Bd) {
-        //A*x=B
-        Mat mat = new Mat(Ad.length, Ad[0].length, CvType.CV_32F);
-
-        for (int i = 0; i < Ad.length; i++) {
-            for (int j = 0; j < Ad[0].length; j++) {
-                mat.put(i, j, Ad[i][j]);
-            }
-        }
-
-        Mat mat2 = new Mat(Bd.length, 1, CvType.CV_32F);
-        for (int i = 0; i < Bd.length; i++) {
-            mat2.put(i, 0, Bd[i]);
-        }
-
-        Mat res = new Mat(Ad[0].length, 1, CvType.CV_32F);
-        
-       // Core.gemm(m2, m3, 1, new Mat(), 0, m1, 0);
-        
-        Core.solve(mat, res, mat2, org.opencv.core.Core.DECOMP_SVD);
-        System.out.println(mat);
-        
-        double[] mires = new double[Ad[0].length];
-        for (int i = 0; i < Ad[0].length; i++) {
-            mires[i] = res.get(i, 0)[0];
-        }
-        return mires;
+    public static double[] Cramer3(double[][] A, double[] B) {
+        double detA = det3(A);
+        double x1 = det3(new double[][]{{B[0],A[0][1],A[0][2]}, {B[1],A[1][1],A[1][2]}, {B[2],A[2][1],A[2][2]}}) / detA;
+        double x2 = det3(new double[][]{{A[0][0],B[0],A[0][2]}, {A[1][0],B[1],A[1][2]}, {A[2][0],B[2],A[2][2]}}) / detA;
+        double x3 = det3(new double[][]{{A[0][0],A[0][1],B[0]}, {A[1][0],A[1][1],B[1]}, {A[2][0],A[2][1],B[2]}}) / detA;
+        return new double[]{x1, x2, x3};
     }
 
     @SuppressWarnings("empty-statement")
@@ -53,17 +33,29 @@ public class Algebra {
         double[] ff2 = new double[3];
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                ff[i][j]=Math.random();
+                ff[i][j] = Math.random();
             }
-            ff2[i]=Math.random();
+            ff2[i] = Math.random();
         }
-        
-        ff = new double[][]{new double[]{3,2,1},new double[]{2,2,4},new double[]{-1,0.5,-1}};
-        ff2 = new double[]{1,-2,0};
-        
-        for (double val : linear_solve(ff, ff2)) {
+
+        ff = new double[][]{new double[]{1, -3, 2}, new double[]{5, 6, -1}, new double[]{4, -1, 3}};
+        ff2 = new double[]{-3, 13, 8};
+
+        for (double val : Cramer3(ff, ff2)) {
             System.out.println(val);
         }
         
+       // System.out.println(det3(new double[][]{{-2,2,-3},{-1,1,3},{2,0,-1}}));
+        
+
+    }
+
+    private static double det3(double[][] m) {
+        return m[0][0] * m[1][1] * m[2][2]
+                + m[0][1] * m[1][2] * m[2][0]
+                + m[0][2] * m[1][0] * m[2][1]
+                - m[0][2] * m[1][1] * m[2][0]
+                - m[0][1] * m[1][0] * m[2][2]
+                - m[0][0] * m[1][2] * m[2][1];
     }
 }
