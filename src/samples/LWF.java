@@ -172,7 +172,7 @@ public class LWF {
             affine(mat,
                     new double[][]{{},{},{}},
                     new double[][]{{},{},{}},
-                    new double[]{C.get(gap, gap)},
+                    new double[]{C.get(0,0),C.get(0,0),C.get(0,0)},
                     lienzo);
         }
         Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\" + image.getName(), lienzo);
