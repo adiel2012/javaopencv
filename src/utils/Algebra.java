@@ -5,7 +5,7 @@
  */
 package utils;
 
-import com.sun.javafx.scene.control.skin.FXVK;
+
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
