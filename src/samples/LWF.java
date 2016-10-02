@@ -138,37 +138,47 @@ public class LWF {
         Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\frontal_" + image.getName(), lienzo);
         Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\lateral_" + image.getName(), lienzo2);
     }
-    
-     private static void save_aligned_images(double[][] puntos, File carpetaalmacen, File image, Mat mat, int[][] delaunay_triangles) {
-     
-         SimpleMatrix P = new SimpleMatrix(puntos);
-         SimpleMatrix M = new SimpleMatrix(Shape3D);
-         SimpleMatrix ones = (new SimpleMatrix(68, 1)).plus(1);
-         M=M.combine(0,3, ones);
-         SimpleMatrix x = M.solve(P);
-         
-         
-         
-         
-         
-         
-         Mat lienzo = new Mat(300, 300, CV_8UC3, new Scalar(0, 0, 0));
+
+    private static void save_aligned_images(double[][] puntos, File carpetaalmacen, File image, Mat mat, int[][] delaunay_triangles) {
+
+        int gap = 10;
+        SimpleMatrix P = new SimpleMatrix(puntos);
+        SimpleMatrix M = new SimpleMatrix(Shape3D);
+        SimpleMatrix ones = (new SimpleMatrix(68, 1)).plus(1);
+        M = M.combine(0, 3, ones);
+        SimpleMatrix C = M.solve(P);
+
+        SimpleMatrix A = (P.minus(M.mult(C))).transpose();
+        SimpleMatrix B = C.transpose();
+
+        SimpleMatrix Error = B.pseudoInverse().mult(A).transpose();
+
+        SimpleMatrix Cara = M.plus(Error);
+//         double v = Cara.get(0, 0);
+
+        Mat lienzo = new Mat(300, 300, CV_8UC3, new Scalar(0, 0, 0));
         //Mat lienzo2 = new Mat(300, 300, CV_8UC3, new Scalar(0, 0, 0));
         double escala = 128;
         for (int[] tri : faceTemplateTriangles) {
-            Imgproc.line(lienzo, new Point(escala * Shape3D[tri[0] - 1][0], escala * Shape3D[tri[0] - 1][1]), new Point(escala * Shape3D[tri[1] - 1][0], escala * Shape3D[tri[1] - 1][1]), new Scalar(0, 255, 0));
-            Imgproc.line(lienzo, new Point(escala * Shape3D[tri[1] - 1][0], escala * Shape3D[tri[1] - 1][1]), new Point(escala * Shape3D[tri[2] - 1][0], escala * Shape3D[tri[2] - 1][1]), new Scalar(0, 255, 0));
-            Imgproc.line(lienzo, new Point(escala * Shape3D[tri[2] - 1][0], escala * Shape3D[tri[2] - 1][1]), new Point(escala * Shape3D[tri[0] - 1][0], escala * Shape3D[tri[0] - 1][1]), new Scalar(0, 255, 0));
+            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[0] - 1][0], gap + escala * Shape3D[tri[0] - 1][1]), new Point(gap + escala * Shape3D[tri[1] - 1][0], gap + escala * Shape3D[tri[1] - 1][1]), new Scalar(0, 255, 0));
+            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[1] - 1][0], gap + escala * Shape3D[tri[1] - 1][1]), new Point(gap + escala * Shape3D[tri[2] - 1][0], gap + escala * Shape3D[tri[2] - 1][1]), new Scalar(0, 255, 0));
+            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[2] - 1][0], gap + escala * Shape3D[tri[2] - 1][1]), new Point(gap + escala * Shape3D[tri[0] - 1][0], gap + escala * Shape3D[tri[0] - 1][1]), new Scalar(0, 255, 0));
 
-//            Imgproc.line(lienzo2, new Point(escala * Shape3D[tri[0] - 1][2], escala * Shape3D[tri[0] - 1][1]), new Point(escala * Shape3D[tri[1] - 1][2], escala * Shape3D[tri[1] - 1][1]), new Scalar(0, 255, 0));
-//            Imgproc.line(lienzo2, new Point(escala * Shape3D[tri[1] - 1][2], escala * Shape3D[tri[1] - 1][1]), new Point(escala * Shape3D[tri[2] - 1][2], escala * Shape3D[tri[2] - 1][1]), new Scalar(0, 255, 0));
-//            Imgproc.line(lienzo2, new Point(escala * Shape3D[tri[2] - 1][2], escala * Shape3D[tri[2] - 1][1]), new Point(escala * Shape3D[tri[0] - 1][2], escala * Shape3D[tri[0] - 1][1]), new Scalar(0, 255, 0));
-
+            Imgproc.line(lienzo, new Point(gap + escala * Cara.get(tri[0] - 1, 0), gap + escala * Cara.get(tri[0] - 1, 1)), new Point(gap + escala * Cara.get(tri[1] - 1, 0), gap + escala * Cara.get(tri[1] - 1, 1)), new Scalar(0, 0, 255));
+            Imgproc.line(lienzo, new Point(gap + escala * Cara.get(tri[1] - 1, 0), gap + escala * Cara.get(tri[1] - 1, 1)), new Point(gap + escala * Cara.get(tri[2] - 1, 0), gap + escala * Cara.get(tri[2] - 1, 1)), new Scalar(0, 0, 255));
+            Imgproc.line(lienzo, new Point(gap + escala * Cara.get(tri[2] - 1, 0), gap + escala * Cara.get(tri[2] - 1, 1)), new Point(gap + escala * Cara.get(tri[0] - 1, 0), gap + escala * Cara.get(tri[0] - 1, 1)), new Scalar(0, 0, 255));
+            
+            
+            affine(mat,
+                    new double[][]{{},{},{}},
+                    new double[][]{{},{},{}},
+                    new double[]{C.get(gap, gap)},
+                    lienzo);
         }
-        Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\frontal_" + image.getName(), lienzo);
+        Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\" + image.getName(), lienzo);
 //        Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\lateral_" + image.getName(), lienzo2);
-         
-     }
+
+    }
     public static int faceTemplateTriangles[][] = new int[][]{
         {54, 36, 53},
         {49, 32, 4},
@@ -282,7 +292,9 @@ public class LWF {
         {50, 68, 62},
         {59, 67, 68}};
 
-   
+    private static void affine(Mat mat, double[][] from, double[][] to, double[] coeficients, Mat lienzo) {
+       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
     double meanshape[][] = new double[][]{{1.256838e-002, 2.106873e-001},
     {1.747292e-002, 3.394221e-001},
