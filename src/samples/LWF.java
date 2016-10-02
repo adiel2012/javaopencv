@@ -167,13 +167,17 @@ public class LWF {
             Imgproc.line(lienzo, new Point(gap + escala * Cara.get(tri[0] - 1, 0), gap + escala * Cara.get(tri[0] - 1, 1)), new Point(gap + escala * Cara.get(tri[1] - 1, 0), gap + escala * Cara.get(tri[1] - 1, 1)), new Scalar(0, 0, 255));
             Imgproc.line(lienzo, new Point(gap + escala * Cara.get(tri[1] - 1, 0), gap + escala * Cara.get(tri[1] - 1, 1)), new Point(gap + escala * Cara.get(tri[2] - 1, 0), gap + escala * Cara.get(tri[2] - 1, 1)), new Scalar(0, 0, 255));
             Imgproc.line(lienzo, new Point(gap + escala * Cara.get(tri[2] - 1, 0), gap + escala * Cara.get(tri[2] - 1, 1)), new Point(gap + escala * Cara.get(tri[0] - 1, 0), gap + escala * Cara.get(tri[0] - 1, 1)), new Scalar(0, 0, 255));
-            
-            
+
             affine(mat,
-                    new double[][]{{},{},{}},
-                    new double[][]{{},{},{}},
-                    new double[]{C.get(0,0),C.get(0,0),C.get(0,0)},
-                    lienzo);
+                    new double[][]{{Shape3D[tri[0] - 1][0], Shape3D[tri[0] - 1][1]},
+                    {Shape3D[tri[1] - 1][0], Shape3D[tri[1] - 1][1]},
+                    {Shape3D[tri[2] - 1][0], Shape3D[tri[2] - 1][1]}},
+                    new double[][]{{Cara.get(tri[0] - 1, 0), Cara.get(tri[0] - 1, 1)},
+                    {Cara.get(tri[1] - 1, 0), Cara.get(tri[1] - 1, 1)},
+                    {Cara.get(tri[2] - 1, 0), Cara.get(tri[2] - 1, 1)}},
+                    new double[][]{{C.get(0, 0), C.get(1, 0), C.get(2, 0), C.get(3, 0)},
+                    {C.get(0, 1), C.get(1, 1), C.get(2, 1), C.get(3, 1)}},
+                    lienzo, escala, gap);
         }
         Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\" + image.getName(), lienzo);
 //        Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\lateral_" + image.getName(), lienzo2);
@@ -292,8 +296,8 @@ public class LWF {
         {50, 68, 62},
         {59, 67, 68}};
 
-    private static void affine(Mat mat, double[][] from, double[][] to, double[] coeficients, Mat lienzo) {
-       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private static void affine(Mat mat, double[][] from, double[][] to, double[][] coeficients, Mat lienzo, double escala, double gap) {
+        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     double meanshape[][] = new double[][]{{1.256838e-002, 2.106873e-001},
