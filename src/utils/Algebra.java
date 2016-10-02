@@ -28,7 +28,7 @@ public class Algebra {
     @SuppressWarnings("empty-statement")
     public static void main(String[] args) {
 
-        System.load("D:\\opencv_instalaciones\\opencv\\build\\java\\x64\\opencv_java310.dll");
+        System.load("D:\\opencv\\opencv\\build\\java\\x64\\opencv_java300.dll");
         double[][] ff = new double[3][3];
         double[] ff2 = new double[3];
         for (int i = 0; i < 3; i++) {

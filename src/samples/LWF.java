@@ -14,7 +14,9 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import org.ejml.simple.SimpleMatrix;
 import org.opencv.core.Core;
+import static org.opencv.core.CvType.CV_8UC3;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
@@ -33,7 +35,7 @@ public class LWF {
         System.out.println("Hello, OpenCV");
         // Load the native library.
 //        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        System.load("D:\\opencv_instalaciones\\opencv\\build\\java\\x64\\opencv_java310.dll");
+        System.load("D:\\opencv\\opencv\\build\\java\\x64\\opencv_java300.dll");
 
         String urlHelen = "D:\\borrar\\helen\\trainset";
         File carpeta = new File(urlHelen);
@@ -58,7 +60,9 @@ public class LWF {
             System.out.println("------------------------");
             double[][] puntos = leerpuntos(new File(urlHelen + "\\" + puntos_file));
             Mat mat = Imgcodecs.imread(image.getAbsolutePath());
-            save_meshed_images(puntos, carpetaalmacen, image, mat, delaunay_triangles);
+            //save_meshed_images(puntos, carpetaalmacen, image, mat, delaunay_triangles);
+            //save_mesh_images(puntos, carpetaalmacen, image, mat, delaunay_triangles);
+            save_aligned_images(puntos, carpetaalmacen, image, mat, delaunay_triangles);
 
         }
 
@@ -117,6 +121,54 @@ public class LWF {
         Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\" + image.getName(), mat_copy);
     }
 
+    private static void save_mesh_images(double[][] puntos, File carpetaalmacen, File image, Mat mat, int[][] delaunay_triangles) {
+        Mat lienzo = new Mat(300, 300, CV_8UC3, new Scalar(0, 0, 0));
+        Mat lienzo2 = new Mat(300, 300, CV_8UC3, new Scalar(0, 0, 0));
+        double escala = 128;
+        for (int[] tri : faceTemplateTriangles) {
+            Imgproc.line(lienzo, new Point(escala * Shape3D[tri[0] - 1][0], escala * Shape3D[tri[0] - 1][1]), new Point(escala * Shape3D[tri[1] - 1][0], escala * Shape3D[tri[1] - 1][1]), new Scalar(0, 255, 0));
+            Imgproc.line(lienzo, new Point(escala * Shape3D[tri[1] - 1][0], escala * Shape3D[tri[1] - 1][1]), new Point(escala * Shape3D[tri[2] - 1][0], escala * Shape3D[tri[2] - 1][1]), new Scalar(0, 255, 0));
+            Imgproc.line(lienzo, new Point(escala * Shape3D[tri[2] - 1][0], escala * Shape3D[tri[2] - 1][1]), new Point(escala * Shape3D[tri[0] - 1][0], escala * Shape3D[tri[0] - 1][1]), new Scalar(0, 255, 0));
+
+            Imgproc.line(lienzo2, new Point(escala * Shape3D[tri[0] - 1][2], escala * Shape3D[tri[0] - 1][1]), new Point(escala * Shape3D[tri[1] - 1][2], escala * Shape3D[tri[1] - 1][1]), new Scalar(0, 255, 0));
+            Imgproc.line(lienzo2, new Point(escala * Shape3D[tri[1] - 1][2], escala * Shape3D[tri[1] - 1][1]), new Point(escala * Shape3D[tri[2] - 1][2], escala * Shape3D[tri[2] - 1][1]), new Scalar(0, 255, 0));
+            Imgproc.line(lienzo2, new Point(escala * Shape3D[tri[2] - 1][2], escala * Shape3D[tri[2] - 1][1]), new Point(escala * Shape3D[tri[0] - 1][2], escala * Shape3D[tri[0] - 1][1]), new Scalar(0, 255, 0));
+
+        }
+        Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\frontal_" + image.getName(), lienzo);
+        Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\lateral_" + image.getName(), lienzo2);
+    }
+    
+     private static void save_aligned_images(double[][] puntos, File carpetaalmacen, File image, Mat mat, int[][] delaunay_triangles) {
+     
+         SimpleMatrix P = new SimpleMatrix(puntos);
+         SimpleMatrix M = new SimpleMatrix(Shape3D);
+         SimpleMatrix ones = (new SimpleMatrix(68, 1)).plus(1);
+         M=M.combine(0,3, ones);
+         SimpleMatrix x = M.solve(P);
+         
+         
+         
+         
+         
+         
+         Mat lienzo = new Mat(300, 300, CV_8UC3, new Scalar(0, 0, 0));
+        //Mat lienzo2 = new Mat(300, 300, CV_8UC3, new Scalar(0, 0, 0));
+        double escala = 128;
+        for (int[] tri : faceTemplateTriangles) {
+            Imgproc.line(lienzo, new Point(escala * Shape3D[tri[0] - 1][0], escala * Shape3D[tri[0] - 1][1]), new Point(escala * Shape3D[tri[1] - 1][0], escala * Shape3D[tri[1] - 1][1]), new Scalar(0, 255, 0));
+            Imgproc.line(lienzo, new Point(escala * Shape3D[tri[1] - 1][0], escala * Shape3D[tri[1] - 1][1]), new Point(escala * Shape3D[tri[2] - 1][0], escala * Shape3D[tri[2] - 1][1]), new Scalar(0, 255, 0));
+            Imgproc.line(lienzo, new Point(escala * Shape3D[tri[2] - 1][0], escala * Shape3D[tri[2] - 1][1]), new Point(escala * Shape3D[tri[0] - 1][0], escala * Shape3D[tri[0] - 1][1]), new Scalar(0, 255, 0));
+
+//            Imgproc.line(lienzo2, new Point(escala * Shape3D[tri[0] - 1][2], escala * Shape3D[tri[0] - 1][1]), new Point(escala * Shape3D[tri[1] - 1][2], escala * Shape3D[tri[1] - 1][1]), new Scalar(0, 255, 0));
+//            Imgproc.line(lienzo2, new Point(escala * Shape3D[tri[1] - 1][2], escala * Shape3D[tri[1] - 1][1]), new Point(escala * Shape3D[tri[2] - 1][2], escala * Shape3D[tri[2] - 1][1]), new Scalar(0, 255, 0));
+//            Imgproc.line(lienzo2, new Point(escala * Shape3D[tri[2] - 1][2], escala * Shape3D[tri[2] - 1][1]), new Point(escala * Shape3D[tri[0] - 1][2], escala * Shape3D[tri[0] - 1][1]), new Scalar(0, 255, 0));
+
+        }
+        Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\frontal_" + image.getName(), lienzo);
+//        Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\lateral_" + image.getName(), lienzo2);
+         
+     }
     public static int faceTemplateTriangles[][] = new int[][]{
         {54, 36, 53},
         {49, 32, 4},
@@ -230,6 +282,8 @@ public class LWF {
         {50, 68, 62},
         {59, 67, 68}};
 
+   
+
     double meanshape[][] = new double[][]{{1.256838e-002, 2.106873e-001},
     {1.747292e-002, 3.394221e-001},
     {3.578013e-002, 4.682388e-001},
@@ -300,7 +354,7 @@ public class LWF {
     {4.565848e-001, 6.943512e-001}};
     int CantidadTriangulos = 111;
 
-    double Shape3D[][] = new double[][]{
+    static double Shape3D[][] = new double[][]{
         {0.0079472212856871, 0.1718322301369845, 0.009608727145607697},
         {0.0029027686449141343, 0.3124944808466294, 0.007441504229196194},
         {0.013773105410669916, 0.4434437098969056, 0.01939895479844035},
@@ -359,7 +413,16 @@ public class LWF {
         {0.6123723897738182, 0.6911258278263349, 0.48858404375587344},
         {0.5590255288124177, 0.7083443703854757, 0.514548991180352},
         {0.5112508557547426, 0.7129359823033317, 0.540411713577669},
-        {0.45826938419698576, 0.7095805749259343, 0.514548991180352}
+        {0.45826938419698576, 0.7095805749259343, 0.514548991180352},
+        {0.4035523127210016, 0.694481235956491, 0.48858404375587344},
+        {0.3757827137784508, 0.6542163356344938, 0.4891973891452939},
+        {0.4579953423951728, 0.637174393186304, 0.5281448097204178},
+        {0.4984622246198579, 0.6395584995770874, 0.5537008601250171},
+        {0.5381983292918547, 0.6379690955674849, 0.5281448097204178},
+        {0.6253437153596053, 0.6470640182185818, 0.4891973891452939},
+        {0.5393858448536967, 0.660309050377337, 0.5213980124023716},
+        {0.49873626692351036, 0.6613686530504052, 0.5432739915936363},
+        {0.45872612120246004, 0.6602207501964011, 0.5213980124023716}
     };
 
     double frontalancho = 89.13250393181819, frontalalto = 90.57584652272726;
