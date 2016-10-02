@@ -5,11 +5,13 @@
  */
 package samples;
 
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,6 +20,8 @@ import org.ejml.simple.SimpleMatrix;
 import org.opencv.core.Core;
 import static org.opencv.core.CvType.CV_8UC3;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
@@ -160,24 +164,32 @@ public class LWF {
         //Mat lienzo2 = new Mat(300, 300, CV_8UC3, new Scalar(0, 0, 0));
         double escala = 128;
         for (int[] tri : faceTemplateTriangles) {
-            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[0] - 1][0], gap + escala * Shape3D[tri[0] - 1][1]), new Point(gap + escala * Shape3D[tri[1] - 1][0], gap + escala * Shape3D[tri[1] - 1][1]), new Scalar(0, 255, 0));
-            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[1] - 1][0], gap + escala * Shape3D[tri[1] - 1][1]), new Point(gap + escala * Shape3D[tri[2] - 1][0], gap + escala * Shape3D[tri[2] - 1][1]), new Scalar(0, 255, 0));
-            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[2] - 1][0], gap + escala * Shape3D[tri[2] - 1][1]), new Point(gap + escala * Shape3D[tri[0] - 1][0], gap + escala * Shape3D[tri[0] - 1][1]), new Scalar(0, 255, 0));
-
-            Imgproc.line(lienzo, new Point(gap + escala * Cara.get(tri[0] - 1, 0), gap + escala * Cara.get(tri[0] - 1, 1)), new Point(gap + escala * Cara.get(tri[1] - 1, 0), gap + escala * Cara.get(tri[1] - 1, 1)), new Scalar(0, 0, 255));
-            Imgproc.line(lienzo, new Point(gap + escala * Cara.get(tri[1] - 1, 0), gap + escala * Cara.get(tri[1] - 1, 1)), new Point(gap + escala * Cara.get(tri[2] - 1, 0), gap + escala * Cara.get(tri[2] - 1, 1)), new Scalar(0, 0, 255));
-            Imgproc.line(lienzo, new Point(gap + escala * Cara.get(tri[2] - 1, 0), gap + escala * Cara.get(tri[2] - 1, 1)), new Point(gap + escala * Cara.get(tri[0] - 1, 0), gap + escala * Cara.get(tri[0] - 1, 1)), new Scalar(0, 0, 255));
+//            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[0] - 1][0], gap + escala * Shape3D[tri[0] - 1][1]), new Point(gap + escala * Shape3D[tri[1] - 1][0], gap + escala * Shape3D[tri[1] - 1][1]), new Scalar(0, 255, 0));
+//            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[1] - 1][0], gap + escala * Shape3D[tri[1] - 1][1]), new Point(gap + escala * Shape3D[tri[2] - 1][0], gap + escala * Shape3D[tri[2] - 1][1]), new Scalar(0, 255, 0));
+//            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[2] - 1][0], gap + escala * Shape3D[tri[2] - 1][1]), new Point(gap + escala * Shape3D[tri[0] - 1][0], gap + escala * Shape3D[tri[0] - 1][1]), new Scalar(0, 255, 0));
+//
+//            Imgproc.line(lienzo, new Point(gap + escala * Cara.get(tri[0] - 1, 0), gap + escala * Cara.get(tri[0] - 1, 1)), new Point(gap + escala * Cara.get(tri[1] - 1, 0), gap + escala * Cara.get(tri[1] - 1, 1)), new Scalar(0, 0, 255));
+//            Imgproc.line(lienzo, new Point(gap + escala * Cara.get(tri[1] - 1, 0), gap + escala * Cara.get(tri[1] - 1, 1)), new Point(gap + escala * Cara.get(tri[2] - 1, 0), gap + escala * Cara.get(tri[2] - 1, 1)), new Scalar(0, 0, 255));
+//            Imgproc.line(lienzo, new Point(gap + escala * Cara.get(tri[2] - 1, 0), gap + escala * Cara.get(tri[2] - 1, 1)), new Point(gap + escala * Cara.get(tri[0] - 1, 0), gap + escala * Cara.get(tri[0] - 1, 1)), new Scalar(0, 0, 255));
 
             affine(mat,
-                    new double[][]{{Shape3D[tri[0] - 1][0], Shape3D[tri[0] - 1][1]},
-                    {Shape3D[tri[1] - 1][0], Shape3D[tri[1] - 1][1]},
-                    {Shape3D[tri[2] - 1][0], Shape3D[tri[2] - 1][1]}},
-                    new double[][]{{Cara.get(tri[0] - 1, 0), Cara.get(tri[0] - 1, 1)},
-                    {Cara.get(tri[1] - 1, 0), Cara.get(tri[1] - 1, 1)},
-                    {Cara.get(tri[2] - 1, 0), Cara.get(tri[2] - 1, 1)}},
+                    new double[][]{{puntos[tri[0] - 1][0], puntos[tri[0] - 1][1]},
+                    {puntos[tri[1] - 1][0], puntos[tri[1] - 1][1]},
+                    {puntos[tri[2] - 1][0], puntos[tri[2] - 1][1]}},
+                    new double[][]{{gap + escala *Cara.get(tri[0] - 1, 0), gap + escala *Cara.get(tri[0] - 1, 1)},
+                    {gap + escala *Cara.get(tri[1] - 1, 0), gap + escala *Cara.get(tri[1] - 1, 1)},
+                    {gap + escala *Cara.get(tri[2] - 1, 0), gap + escala *Cara.get(tri[2] - 1, 1)}},
                     new double[][]{{C.get(0, 0), C.get(1, 0), C.get(2, 0), C.get(3, 0)},
                     {C.get(0, 1), C.get(1, 1), C.get(2, 1), C.get(3, 1)}},
                     lienzo, escala, gap);
+            
+                        Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[0] - 1][0], gap + escala * Shape3D[tri[0] - 1][1]), new Point(gap + escala * Shape3D[tri[1] - 1][0], gap + escala * Shape3D[tri[1] - 1][1]), new Scalar(0, 255, 0));
+            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[1] - 1][0], gap + escala * Shape3D[tri[1] - 1][1]), new Point(gap + escala * Shape3D[tri[2] - 1][0], gap + escala * Shape3D[tri[2] - 1][1]), new Scalar(0, 255, 0));
+            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[2] - 1][0], gap + escala * Shape3D[tri[2] - 1][1]), new Point(gap + escala * Shape3D[tri[0] - 1][0], gap + escala * Shape3D[tri[0] - 1][1]), new Scalar(0, 255, 0));
+//
+            
+            
+          //  Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\" + image.getName(), lienzo);
         }
         Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\" + image.getName(), lienzo);
 //        Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\lateral_" + image.getName(), lienzo2);
@@ -298,6 +310,80 @@ public class LWF {
 
     private static void affine(Mat mat, double[][] from, double[][] to, double[][] coeficients, Mat lienzo, double escala, double gap) {
         // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        //   http://stackoverflow.com/questions/10100715/opencv-warping-from-one-triangle-to-another
+        //  https://www.learnopencv.com/warp-one-triangle-to-another-using-opencv-c-python/
+        //   http://docs.opencv.org/2.4/doc/tutorials/imgproc/imgtrans/warp_affine/warp_affine.html
+        MatOfPoint2f src_pf = new MatOfPoint2f(new Point(from[0][0], from[0][1]), new Point(from[1][0], from[1][1]), new Point(from[2][0], from[2][1]));
+        MatOfPoint2f dst_pf = new MatOfPoint2f(new Point(to[0][0], to[0][1]), new Point(to[1][0], to[1][1]), new Point(to[2][0], to[2][1]));
+        
+      
+        //  https://www.learnopencv.com/warp-one-triangle-to-another-using-opencv-c-python/#download
+//how do I set up the position numbers in MatOfPoint2f here?
+        Mat perspective_matrix = Imgproc.getAffineTransform(src_pf, dst_pf);
+        
+        Rect r1 = Imgproc.boundingRect(new MatOfPoint(src_pf));
+        Rect r2 = Imgproc.boundingRect(new MatOfPoint(dst_pf));
+        
+        
+        ArrayList<Point> tri1Cropped = new ArrayList<>(), tri2Cropped= new ArrayList<>();
+     ArrayList<Point> tri2CroppedInt= new ArrayList<>();
+    for(int i = 0; i < 3; i++)
+    {
+        tri1Cropped.push_back( Point2f( tri1[i].x - r1.x, tri1[i].y -  r1.y) );
+        tri2Cropped.push_back( Point2f( tri2[i].x - r2.x, tri2[i].y - r2.y) );
+
+        // fillConvexPoly needs a vector of Point and not Point2f
+        tri2CroppedInt.push_back( Point((int)(tri2[i].x - r2.x), (int)(tri2[i].y - r2.y)) );
+
+    }
+        
+        
+        
+      //  Imgproc.warpAffine(mat, lienzo, perspective_matrix, lienzo.size());
+
+       // Imgproc.getAffineTransform(null, null);
+        
+        
+        
+   /*     
+        // Find bounding rectangle for each triangle
+    Rect r1 = boundingRect(tri1);
+    Rect r2 = boundingRect(tri2);
+    
+    // Offset points by left top corner of the respective rectangles
+    vector<Point2f> tri1Cropped, tri2Cropped;
+    vector<Point> tri2CroppedInt;
+    for(int i = 0; i < 3; i++)
+    {
+        tri1Cropped.push_back( Point2f( tri1[i].x - r1.x, tri1[i].y -  r1.y) );
+        tri2Cropped.push_back( Point2f( tri2[i].x - r2.x, tri2[i].y - r2.y) );
+
+        // fillConvexPoly needs a vector of Point and not Point2f
+        tri2CroppedInt.push_back( Point((int)(tri2[i].x - r2.x), (int)(tri2[i].y - r2.y)) );
+
+    }
+
+    // Apply warpImage to small rectangular patches
+    Mat img1Cropped;
+    img1(r1).copyTo(img1Cropped);
+
+    // Given a pair of triangles, find the affine transform.
+    Mat warpMat = getAffineTransform( tri1Cropped, tri2Cropped );
+    
+    // Apply the Affine Transform just found to the src image
+    Mat img2Cropped = Mat::zeros(r2.height, r2.width, img1Cropped.type());
+    warpAffine( img1Cropped, img2Cropped, warpMat, img2Cropped.size(), INTER_LINEAR, BORDER_REFLECT_101);
+
+    // Get mask by filling triangle
+    Mat mask = Mat::zeros(r2.height, r2.width, CV_32FC3);
+    fillConvexPoly(mask, tri2CroppedInt, Scalar(1.0, 1.0, 1.0), 16, 0);
+    
+    // Copy triangular region of the rectangular patch to the output image
+    multiply(img2Cropped,mask, img2Cropped);
+    multiply(img2(r2), Scalar(1.0,1.0,1.0) - mask, img2(r2));
+    img2(r2) = img2(r2) + img2Cropped;*/
+
     }
 
     double meanshape[][] = new double[][]{{1.256838e-002, 2.106873e-001},
