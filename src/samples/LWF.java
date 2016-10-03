@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -146,7 +147,7 @@ public class LWF {
 
     private static void save_aligned_images(double[][] puntos, File carpetaalmacen, File image, Mat mat, int[][] delaunay_triangles) {
 
-        int gap = 10;
+        int gap = 100;
         SimpleMatrix P = new SimpleMatrix(puntos);
         SimpleMatrix M = new SimpleMatrix(Shape3D);
         SimpleMatrix ones = (new SimpleMatrix(68, 1)).plus(1);
@@ -161,9 +162,9 @@ public class LWF {
         SimpleMatrix Cara = M.plus(Error);
 //         double v = Cara.get(0, 0);
 
-        Mat lienzo = new Mat(300, 300, CV_8UC3, new Scalar(0, 0, 0));
+        Mat lienzo = new Mat(3000, 3000, CV_8UC3, new Scalar(0, 0, 0));
         //Mat lienzo2 = new Mat(300, 300, CV_8UC3, new Scalar(0, 0, 0));
-        double escala = 128;
+        double escala = 1280;
         
        // Cara = M;
         for (int[] tri : faceTemplateTriangles) {
@@ -186,9 +187,9 @@ public class LWF {
                     {C.get(0, 1), C.get(1, 1), C.get(2, 1), C.get(3, 1)}},
                     lienzo, escala, gap);
 
-            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[0] - 1][0], gap + escala * Shape3D[tri[0] - 1][1]), new Point(gap + escala * Shape3D[tri[1] - 1][0], gap + escala * Shape3D[tri[1] - 1][1]), new Scalar(0, 255, 0));
-            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[1] - 1][0], gap + escala * Shape3D[tri[1] - 1][1]), new Point(gap + escala * Shape3D[tri[2] - 1][0], gap + escala * Shape3D[tri[2] - 1][1]), new Scalar(0, 255, 0));
-            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[2] - 1][0], gap + escala * Shape3D[tri[2] - 1][1]), new Point(gap + escala * Shape3D[tri[0] - 1][0], gap + escala * Shape3D[tri[0] - 1][1]), new Scalar(0, 255, 0));
+//            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[0] - 1][0], gap + escala * Shape3D[tri[0] - 1][1]), new Point(gap + escala * Shape3D[tri[1] - 1][0], gap + escala * Shape3D[tri[1] - 1][1]), new Scalar(0, 255, 0));
+//            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[1] - 1][0], gap + escala * Shape3D[tri[1] - 1][1]), new Point(gap + escala * Shape3D[tri[2] - 1][0], gap + escala * Shape3D[tri[2] - 1][1]), new Scalar(0, 255, 0));
+//            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[2] - 1][0], gap + escala * Shape3D[tri[2] - 1][1]), new Point(gap + escala * Shape3D[tri[0] - 1][0], gap + escala * Shape3D[tri[0] - 1][1]), new Scalar(0, 255, 0));
 //
 
              // Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\" + image.getName(), lienzo);
@@ -199,117 +200,119 @@ public class LWF {
 
     }
     public static int faceTemplateTriangles[][] = new int[][]{
-        {54, 36, 53},
-        {49, 32, 4},
-        {34, 31, 33},
-        {56, 57, 11},
-        {53, 35, 34},
-        {31, 35, 36},
-        {31, 36, 30},
-        {36, 48, 30},
-        {9, 58, 59},
-        {46, 16, 17},
-        {49, 4, 5},
-        {43, 23, 28},
-        {3, 4, 32},
-        {42, 32, 41},
-        {19, 38, 20},
-        {37, 1, 2},
-        {37, 18, 1},
-        {37, 19, 18},
-        {37, 38, 19},
-        {23, 21, 22},
-        {23, 24, 21},
-        {45, 46, 26},
-        {28, 23, 22},
-        {29, 43, 28},
-        {24, 20, 21},
-        {43, 44, 23},
-        {25, 20, 24},
-        {23, 44, 24},
-        {24, 45, 25},
-        {42, 37, 2},
-        {36, 14, 15},
-        {42, 38, 37},
-        {9, 10, 57},
-        {40, 41, 30},
-        {51, 34, 33},
-        {41, 39, 38},
-        {60, 49, 6},
-        {6, 49, 5},
-        {31, 30, 32},
-        {52, 53, 34},
-        {31, 32, 33},
-        {32, 50, 33},
-        {54, 55, 36},
-        {34, 35, 31},
-        {34, 51, 52},
-        {16, 46, 47},
-        {15, 16, 47},
-        {3, 42, 2},
-        {40, 28, 22},
-        {21, 38, 39},
-        {21, 20, 38},
-        {22, 39, 40},
-        {22, 21, 39},
-        {29, 40, 30},
-        {29, 28, 40},
-        {30, 41, 32},
-        {40, 39, 41},
-        {32, 42, 3},
-        {41, 38, 42},
-        {30, 43, 29},
-        {45, 26, 25},
-        {24, 44, 45},
-        {47, 36, 15},
-        {43, 48, 44},
-        {46, 27, 26},
-        {27, 46, 17},
-        {45, 44, 48},
-        {45, 47, 46},
-        {48, 36, 47},
-        {45, 48, 47},
-        {43, 30, 48},
-        {32, 49, 50},
-        {6, 7, 60},
-        {10, 11, 57},
-        {51, 33, 50},
-        {61, 60, 50},
-        {56, 12, 55},
-        {50, 60, 68},
-        {53, 36, 35},
-        {64, 66, 54},
-        {55, 13, 14},
-        {52, 63, 64},
-        {55, 14, 36},
-        {65, 55, 54},
-        {12, 13, 55},
-        {12, 56, 11},
-        {54, 53, 64},
-        {67, 59, 58},
-        {58, 9, 57},
-        {8, 9, 59},
-        {63, 52, 62},
-        {8, 59, 7},
-        {68, 67, 63},
-        {59, 60, 7},
-        {59, 68, 60},
-        {49, 61, 50},
-        {49, 60, 61},
-        {51, 62, 52},
-        {51, 50, 62},
-        {57, 66, 67},
-        {64, 53, 52},
-        {66, 64, 63},
-        {66, 56, 54},
-        {56, 65, 54},
-        {56, 55, 65},
-        {67, 66, 63},
-        {57, 56, 66},
-        {57, 67, 58},
-        {63, 62, 68},
-        {50, 68, 62},
-        {59, 67, 68}};
+         { 54, 36, 53 },
+{ 49, 32, 4 },
+{ 34, 31, 33 },
+{ 56, 57, 11 },
+{ 53, 35, 34 },
+{ 31, 35, 36 },
+{ 31, 36, 30 },
+{ 36, 48, 30 },
+{ 9, 58, 59 },
+{ 46, 16, 17 },
+{ 49, 4, 5 },
+{ 43, 23, 28 },
+{ 3, 4, 32 },
+{ 42, 32, 41 },
+{ 19, 38, 20 },
+{ 37, 1, 2 },
+{ 37, 18, 1 },
+{ 37, 19, 18 },
+{ 37, 38, 19 },
+{ 23, 21, 22 },
+{ 23, 24, 21 },
+{ 45, 46, 26 },
+{ 28, 23, 22 },
+{ 29, 43, 28 },
+{ 24, 20, 21 },
+{ 43, 44, 23 },
+{ 25, 20, 24 },
+{ 23, 44, 24 },
+{ 24, 45, 25 },
+{ 42, 37, 2 },
+{ 36, 14, 15 },
+{ 42, 38, 37 },
+{ 9, 10, 57 },
+{ 40, 41, 30 },
+{ 51, 34, 33 },
+{ 41, 39, 38 },
+{ 60, 49, 6 },
+{ 6, 49, 5 },
+{ 31, 30, 32 },
+{ 52, 53, 34 },
+{ 31, 32, 33 },
+{ 32, 50, 33 },
+{ 54, 55, 36 },
+{ 34, 35, 31 },
+{ 34, 51, 52 },
+{ 16, 46, 47 },
+{ 15, 16, 47 },
+{ 3, 42, 2 },
+{ 40, 28, 22 },
+{ 21, 38, 39 },
+{ 21, 20, 38 },
+{ 22, 39, 40 },
+{ 22, 21, 39 },
+{ 29, 40, 30 },
+{ 29, 28, 40 },
+{ 30, 41, 32 },
+{ 40, 39, 41 },
+{ 32, 42, 3 },
+{ 41, 38, 42 },
+{ 30, 43, 29 },
+{ 45, 26, 25 },
+{ 24, 44, 45 },
+{ 47, 36, 15 },
+{ 43, 48, 44 },
+{ 46, 27, 26 },
+{ 27, 46, 17 },
+{ 45, 44, 48 },
+{ 45, 47, 46 },
+{ 48, 36, 47 },
+{ 45, 48, 47 },
+{ 43, 30, 48 },
+{ 32, 49, 50 },
+{ 6, 7, 60 },
+{ 10, 11, 57 },
+{ 51, 33, 50 },
+{ 61, 60, 50 },
+{ 56, 12, 55 },
+{ 50, 60, 68 },
+{ 53, 36, 35 },
+{ 64, 66, 54 },
+{ 55, 13, 14 },
+{ 52, 63, 64 },
+{ 55, 14, 36 },
+{ 65, 55, 54 },
+{ 12, 13, 55 },
+{ 12, 56, 11 },
+{ 54, 53, 64 },
+{ 67, 59, 58 },
+{ 58, 9, 57 },
+{ 8, 9, 59 },
+{ 63, 52, 62 },
+{ 8, 59, 7 },
+{ 68, 67, 63 },
+{ 59, 60, 7 },
+{ 59, 68, 60 },
+{ 49, 61, 50 },
+{ 49, 60, 61 },
+{ 51, 62, 52 },
+{ 51, 50, 62 },
+{ 57, 66, 67 },
+{ 64, 53, 52 },
+{ 66, 64, 63 },
+{ 66, 56, 54 },
+{ 56, 65, 54 },
+{ 56, 55, 65 },
+{ 67, 66, 63 },
+{ 57, 56, 66 },
+{ 57, 67, 58 },
+{ 63, 62, 68 },
+{ 50, 68, 62 },
+{ 59, 67, 68 }};
+    
+    public static Random rnd = new Random();
 
     private static void affine(Mat mat, double[][] from, double[][] to, double[][] coeficients, Mat lienzo, double escala, double gap) {
         // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -337,9 +340,9 @@ public class LWF {
                 new Point(to[2][0] - r2.x, to[2][1] - r2.y));
 
         MatOfPoint2f tri2Cropped = new MatOfPoint2f(
-                new Point((int) (to[0][0] - r2.x), (int) (to[0][1] - r2.y)),
-                new Point((int) (to[1][0] - r2.x), (int) (to[1][1] - r2.y)),
-                new Point((int) (to[2][0] - r2.x), (int) (to[2][1] - r2.y)));
+                new Point( (to[0][0] - r2.x),  (to[0][1] - r2.y)),
+                new Point( (to[1][0] - r2.x), (to[1][1] - r2.y)),
+                new Point( (to[2][0] - r2.x),  (to[2][1] - r2.y)));
 //        for (int i = 0; i < 3; i++) {
 //           // tri1Cropped.push_back(new MatOfPoint(new Point(from[i][0] - r1.x, from[i][1] - r1.y))); //           new Point( from[i][0]  - r1.x, from[i][1]-  r1.y) );
 //            //tri2Cropped.push_back(new MatOfPoint(new Point(to[i][0] - r2.x, to[i][1] - r2.y)));
@@ -358,11 +361,11 @@ public class LWF {
 
         // Apply the Affine Transform just found to the src image
         Mat img2Cropped = Mat.zeros(r2.height, r2.width, img1Cropped.type());
-        Imgproc.warpAffine(img1Cropped, img2Cropped, warpMat, img2Cropped.size(), 0, Imgproc.INTER_LINEAR, new Scalar(Core.BORDER_REFLECT_101));
+        Imgproc.warpAffine(img1Cropped, img2Cropped, warpMat, img2Cropped.size(),0,Imgproc.INTER_LINEAR, new Scalar(Core.BORDER_TRANSPARENT)); //, 0, Imgproc.INTER_LINEAR, new Scalar(Core.BORDER_REFLECT_101));
 
         // Get mask by filling triangle
         Mat mask = Mat.zeros(r2.height, r2.width, CvType.CV_8UC3);    ///CV_8U    CV_32FC3
-        Imgproc.fillConvexPoly(mask, tri2CroppedInt, new Scalar(1.0, 1.0, 1.0));
+        Imgproc.fillConvexPoly(mask, tri2CroppedInt, new Scalar(1.0, 1.0, 1.0),16, 0);
 
          // Copy triangular region of the rectangular patch to the output image
 //         Core.multiply(img2Cropped,mask, img2Cropped);
@@ -376,12 +379,41 @@ public class LWF {
        // Core.subtract(Mat.ones(mask.height(), mask.width(), CvType.CV_8UC3), mask, mask);
        // Mat ff =   ;
         
-         Core.multiply(img2Cropped,mask, img2Cropped);
-         Core.multiply(lienzo.submat(r2), mask  , lienzo.submat(r2));
-         //img2(r2) = img2(r2) + img2Cropped;
-         
-         Core.add(lienzo.submat(r2), img2Cropped, lienzo.submat(r2));
+       
         
+        //   este
+//         Core.multiply(img2Cropped,mask, img2Cropped);
+//         Core.multiply(lienzo.submat(r2), mask  , lienzo.submat(r2));         
+//         Core.add(lienzo.submat(r2), img2Cropped, lienzo.submat(r2));
+    
+         
+         
+         
+         Mat bb = new Mat(mat, r2);
+         bb.setTo(new Scalar(rnd.nextInt(),rnd.nextInt(),rnd.nextInt()));
+         
+         Core.multiply(bb,mask, bb);
+         Core.multiply(lienzo.submat(r2), mask  , lienzo.submat(r2));         
+         Core.add(lienzo.submat(r2), bb, lienzo.submat(r2));
+         
+        // lienzo.submat(r2).setTo(new Scalar(rnd.nextInt(),rnd.nextInt(),rnd.nextInt()));
+         
+         
+//         
+//      Imgproc.fillConvexPoly(lienzo, new MatOfPoint(
+//                new Point(to[0][0] , to[0][1]),
+//                new Point(to[1][0] , to[1][1]),
+//                new Point(to[2][0] , to[2][1] )), new Scalar(1,1,1));
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
         
 //        img2Cropped.copyTo(lienzo);
 //        return;
@@ -502,7 +534,7 @@ public class LWF {
     {5.586920e-001, 6.916318e-001},
     {5.047532e-001, 6.987404e-001},
     {4.565848e-001, 6.943512e-001}};
-    int CantidadTriangulos = 111;
+   // int CantidadTriangulos = 111;
 
     static double Shape3D[][] = new double[][]{
         {0.0079472212856871, 0.1718322301369845, 0.009608727145607697},
