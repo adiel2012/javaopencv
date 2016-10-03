@@ -148,7 +148,7 @@ public class LWF {
 
     private static void save_aligned_images(double[][] puntos, File carpetaalmacen, File image, Mat mat, int[][] delaunay_triangles) {
 
-        int gap = 100;
+        
         SimpleMatrix P = new SimpleMatrix(puntos);
         SimpleMatrix M = new SimpleMatrix(Shape3D);
         SimpleMatrix ones = (new SimpleMatrix(68, 1)).plus(1);
@@ -163,11 +163,13 @@ public class LWF {
         SimpleMatrix Cara = M.plus(Error);
 //         double v = Cara.get(0, 0);
 
-        Mat lienzo = new Mat(3000, 3000, CV_8UC3, new Scalar(0, 0, 0));
+        int dim = 3000;
+        Mat lienzo = new Mat(dim, dim, CV_8UC3, new Scalar(0, 0, 0));
         //Mat lienzo2 = new Mat(300, 300, CV_8UC3, new Scalar(0, 0, 0));
         double escala = 1280;
+        int gap = (int) ((dim-escala)/2);
         
-        Cara = M;
+        //Cara = M;
         for (int[] tri : faceTemplateTriangles) {
 //            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[0] - 1][0], gap + escala * Shape3D[tri[0] - 1][1]), new Point(gap + escala * Shape3D[tri[1] - 1][0], gap + escala * Shape3D[tri[1] - 1][1]), new Scalar(0, 255, 0));
 //            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[1] - 1][0], gap + escala * Shape3D[tri[1] - 1][1]), new Point(gap + escala * Shape3D[tri[2] - 1][0], gap + escala * Shape3D[tri[2] - 1][1]), new Scalar(0, 255, 0));
