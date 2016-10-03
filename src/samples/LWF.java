@@ -319,47 +319,77 @@ public class LWF {
 
         //  https://www.learnopencv.com/warp-one-triangle-to-another-using-opencv-c-python/#download
 //how do I set up the position numbers in MatOfPoint2f here?
-        Mat perspective_matrix = Imgproc.getAffineTransform(src_pf, dst_pf);
+        //  Mat perspective_matrix = Imgproc.getAffineTransform(src_pf, dst_pf);
+        Rect r1 = Imgproc.boundingRect(new MatOfPoint(new Point(from[0][0], from[0][1]), new Point(from[1][0], from[1][1]), new Point(from[2][0], from[2][1])));
+        Rect r2 = Imgproc.boundingRect(new MatOfPoint(new Point(to[0][0], to[0][1]), new Point(to[1][0], to[1][1]), new Point(to[2][0], to[2][1])));
 
-        Rect r1 = Imgproc.boundingRect(new MatOfPoint(src_pf));
-        Rect r2 = Imgproc.boundingRect(new MatOfPoint(dst_pf));
+        MatOfPoint2f tri1Cropped = new MatOfPoint2f(
+                new Point(from[0][0] - r1.x, from[0][1] - r1.y),
+                new Point(from[1][0] - r1.x, from[1][1] - r1.y),
+                new Point(from[2][0] - r1.x, from[2][1] - r1.y));
 
-        MatOfPoint2f tri1Cropped = new MatOfPoint2f(), tri2Cropped = new MatOfPoint2f();
-        MatOfPoint2f tri2CroppedInt = new MatOfPoint2f();
+        MatOfPoint tri2CroppedInt = new MatOfPoint(
+                new Point(to[0][0] - r2.x, to[0][1] - r2.y),
+                new Point(to[1][0] - r2.x, to[1][1] - r2.y),
+                new Point(to[2][0] - r2.x, to[2][1] - r2.y));
+
+        MatOfPoint2f tri2Cropped = new MatOfPoint2f(
+                new Point((int) (to[0][0] - r2.x), (int) (to[0][1] - r2.y)),
+                new Point((int) (to[1][0] - r2.x), (int) (to[1][1] - r2.y)),
+                new Point((int) (to[2][0] - r2.x), (int) (to[2][1] - r2.y)));
         for (int i = 0; i < 3; i++) {
-            tri1Cropped.push_back(new MatOfPoint2f(new Point(from[i][0] - r1.x, from[i][1] - r1.y))); //           new Point( from[i][0]  - r1.x, from[i][1]-  r1.y) );
-            tri2Cropped.push_back(new MatOfPoint2f(new Point(to[i][0] - r2.x, to[i][1] - r2.y)));
+           // tri1Cropped.push_back(new MatOfPoint(new Point(from[i][0] - r1.x, from[i][1] - r1.y))); //           new Point( from[i][0]  - r1.x, from[i][1]-  r1.y) );
+            //tri2Cropped.push_back(new MatOfPoint(new Point(to[i][0] - r2.x, to[i][1] - r2.y)));
 
             // fillConvexPoly needs a vector of Point and not Point2f
-            tri2CroppedInt.push_back(new MatOfPoint2f(new Point((int) (to[i][0] - r2.x), (int) (to[i][1] - r2.y))));
+           // tri2CroppedInt.push_back(new MatOfPoint2f(new Point((int) (to[i][0] - r2.x), (int) (to[i][1] - r2.y))));
 
         }
 
         // Apply warpImage to small rectangular patches
-         Mat img1Cropped = mat.submat(r1);
+        Mat img1Cropped = mat.submat(r1);
          //img1(r1).copyTo(img1Cropped);
 
-         // Given a pair of triangles, find the affine transform.
-         Mat warpMat = Imgproc.getAffineTransform( tri1Cropped, tri2Cropped );
-    
-         // Apply the Affine Transform just found to the src image
-         Mat img2Cropped = Mat.zeros(r2.height, r2.width, img1Cropped.type());
-         Imgproc.warpAffine( img1Cropped, img2Cropped, warpMat, img2Cropped.size(),0,  Imgproc.INTER_LINEAR, new Scalar(Core.BORDER_REFLECT101));
+        // Given a pair of triangles, find the affine transform.
+        Mat warpMat = Imgproc.getAffineTransform(tri1Cropped, tri2Cropped);
 
-         // Get mask by filling triangle
-         Mat mask = Mat.zeros(r2.height, r2.width, CvType.CV_32FC3);
-         Imgproc.fillConvexPoly(mask, new MatOfPoint(tri2CroppedInt), new Scalar(1.0, 1.0, 1.0), 16, 0);
-    
+        // Apply the Affine Transform just found to the src image
+        Mat img2Cropped = Mat.zeros(r2.height, r2.width, img1Cropped.type());
+        Imgproc.warpAffine(img1Cropped, img2Cropped, warpMat, img2Cropped.size(), 0, Imgproc.INTER_LINEAR, new Scalar(Core.BORDER_REFLECT101));
+
+        // Get mask by filling triangle
+        Mat mask = Mat.zeros(r2.height, r2.width, CvType.CV_8UC3);    ///CV_8U    CV_32FC3
+        Imgproc.fillConvexPoly(mask, tri2CroppedInt, new Scalar(1.0, 1.0, 1.0), 16, 0);
+
          // Copy triangular region of the rectangular patch to the output image
-         Core.multiply(img2Cropped,mask, img2Cropped);
-         Core.multiply(lienzo.submat(r2),  (new Scalar(1.0,1.0,1.0)). - mask, lienzo.submat(r2));
+//         Core.multiply(img2Cropped,mask, img2Cropped);
+//         
+//         Core.multiply(mask, new Scalar(-1), mask);
+//        Core.(mask,new Scalar(gap), mask);
+         //Core.multiply(lienzo.submat(r2),  (new Scalar(1.0,1.0,1.0)). - Core.multiply(mask,), lienzo.submat(r2));
 //         img2(r2) = img2(r2) + img2Cropped;
-         
-        img2Cropped.copyTo(lienzo, mask);
+        
+        
+        Core.subtract(Mat.ones(mask.height(), mask.width(), CvType.CV_8UC3), mask, mask);
+       // Mat ff =   ;
+        
+         Core.multiply(img2Cropped,mask, img2Cropped);
+         Core.multiply(lienzo.submat(r2), mask  , lienzo.submat(r2));
+         //img2(r2) = img2(r2) + img2Cropped;
+         Core.add(lienzo.submat(r2), img2Cropped, lienzo.submat(r2));
+        
+        
+        //img2Cropped.copyTo(lienzo, mask);
+        
+        
+        
+        
+        
+        
        // http://stackoverflow.com/questions/14111716/how-to-set-a-mask-image-for-grabcut-in-opencv  
 
       //  Imgproc.warpAffine(mat, lienzo, perspective_matrix, lienzo.size());
-       // Imgproc.getAffineTransform(null, null);
+        // Imgproc.getAffineTransform(null, null);
         /*     
          // Find bounding rectangle for each triangle
          Rect r1 = boundingRect(tri1);
