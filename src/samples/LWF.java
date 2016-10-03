@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -166,21 +167,30 @@ public class LWF {
         //Mat lienzo2 = new Mat(300, 300, CV_8UC3, new Scalar(0, 0, 0));
         double escala = 1280;
         
-       // Cara = M;
+        Cara = M;
         for (int[] tri : faceTemplateTriangles) {
 //            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[0] - 1][0], gap + escala * Shape3D[tri[0] - 1][1]), new Point(gap + escala * Shape3D[tri[1] - 1][0], gap + escala * Shape3D[tri[1] - 1][1]), new Scalar(0, 255, 0));
 //            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[1] - 1][0], gap + escala * Shape3D[tri[1] - 1][1]), new Point(gap + escala * Shape3D[tri[2] - 1][0], gap + escala * Shape3D[tri[2] - 1][1]), new Scalar(0, 255, 0));
 //            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[2] - 1][0], gap + escala * Shape3D[tri[2] - 1][1]), new Point(gap + escala * Shape3D[tri[0] - 1][0], gap + escala * Shape3D[tri[0] - 1][1]), new Scalar(0, 255, 0));
 //
-//            Imgproc.line(lienzo, new Point(gap + escala * Cara.get(tri[0] - 1, 0), gap + escala * Cara.get(tri[0] - 1, 1)), new Point(gap + escala * Cara.get(tri[1] - 1, 0), gap + escala * Cara.get(tri[1] - 1, 1)), new Scalar(0, 0, 255));
-//            Imgproc.line(lienzo, new Point(gap + escala * Cara.get(tri[1] - 1, 0), gap + escala * Cara.get(tri[1] - 1, 1)), new Point(gap + escala * Cara.get(tri[2] - 1, 0), gap + escala * Cara.get(tri[2] - 1, 1)), new Scalar(0, 0, 255));
-//            Imgproc.line(lienzo, new Point(gap + escala * Cara.get(tri[2] - 1, 0), gap + escala * Cara.get(tri[2] - 1, 1)), new Point(gap + escala * Cara.get(tri[0] - 1, 0), gap + escala * Cara.get(tri[0] - 1, 1)), new Scalar(0, 0, 255));
+//            Imgproc.line(lienzo, new Point(gap + escala * Cara.get(tri[0] - 1, 0), gap + escala * Cara.get(tri[0] - 1, 1)), new Point(gap + escala * Cara.get(tri[1] - 1, 0), gap + escala * Cara.get(tri[1] - 1, 1)), new Scalar(rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255)));
+//            Imgproc.line(lienzo, new Point(gap + escala * Cara.get(tri[0] - 1, 0), gap + escala * Cara.get(tri[0] - 1, 1)), new Point(gap + escala * Cara.get(tri[1] - 1, 0), gap + escala * Cara.get(tri[1] - 1, 1)), new Scalar(rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255)));
+//            Imgproc.line(lienzo, new Point(gap + escala * Cara.get(tri[2] - 1, 0), gap + escala * Cara.get(tri[2] - 1, 1)), new Point(gap + escala * Cara.get(tri[0] - 1, 0), gap + escala * Cara.get(tri[0] - 1, 1)), new Scalar(rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255)));
 
+            //  dibuja los rectangulos
+//            List<MatOfPoint> border = new ArrayList<MatOfPoint>();
+//            border.add(new MatOfPoint(
+//                    new Point(gap + escala * Cara.get(tri[0] - 1, 0), gap + escala * Cara.get(tri[0] - 1, 1)),
+//                    new Point(gap + escala * Cara.get(tri[1] - 1, 0), gap + escala * Cara.get(tri[1] - 1, 1)),
+//                    new Point(gap + escala * Cara.get(tri[2] - 1, 0), gap + escala * Cara.get(tri[2] - 1, 1))));           
+//            Imgproc.fillPoly(lienzo, border, new Scalar(rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255)));
+            
             affine(mat,
                     new double[][]{{puntos[tri[0] - 1][0], puntos[tri[0] - 1][1]},
                     {puntos[tri[1] - 1][0], puntos[tri[1] - 1][1]},
                     {puntos[tri[2] - 1][0], puntos[tri[2] - 1][1]}},
-                    new double[][]{{gap + escala * Cara.get(tri[0] - 1, 0), gap + escala * Cara.get(tri[0] - 1, 1)},
+                    new double[][]{
+                    {gap + escala * Cara.get(tri[0] - 1, 0), gap + escala * Cara.get(tri[0] - 1, 1)},
                     {gap + escala * Cara.get(tri[1] - 1, 0), gap + escala * Cara.get(tri[1] - 1, 1)},
                     {gap + escala * Cara.get(tri[2] - 1, 0), gap + escala * Cara.get(tri[2] - 1, 1)}},
                     new double[][]{{C.get(0, 0), C.get(1, 0), C.get(2, 0), C.get(3, 0)},
@@ -192,7 +202,7 @@ public class LWF {
 //            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[2] - 1][0], gap + escala * Shape3D[tri[2] - 1][1]), new Point(gap + escala * Shape3D[tri[0] - 1][0], gap + escala * Shape3D[tri[0] - 1][1]), new Scalar(0, 255, 0));
 //
 
-             // Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\" + image.getName(), lienzo);
+            //  Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\" + image.getName(), lienzo);
         }
         Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\" + image.getName(), lienzo);
        // Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\" + image.getName(), mat);
@@ -358,6 +368,12 @@ public class LWF {
 
         // Given a pair of triangles, find the affine transform.
         Mat warpMat = Imgproc.getAffineTransform(tri1Cropped, tri2Cropped);
+       
+//       Mat bbb = warpMat.mul(tri1Cropped);
+//        
+//       System.out.println( warpMat.dump() );
+//       System.out.println( tri2Cropped.dump() );
+//       System.out.println( bbb.dump() );
 
         // Apply the Affine Transform just found to the src image
         Mat img2Cropped = Mat.zeros(r2.height, r2.width, img1Cropped.type());
@@ -382,19 +398,21 @@ public class LWF {
        
         
         //   este
-//         Core.multiply(img2Cropped,mask, img2Cropped);
-//         Core.multiply(lienzo.submat(r2), mask  , lienzo.submat(r2));         
-//         Core.add(lienzo.submat(r2), img2Cropped, lienzo.submat(r2));
+         Core.multiply(img2Cropped,mask, img2Cropped);
+         //Core.multiply(lienzo.submat(r2), mask  , lienzo.submat(r2));         
+         Core.add(lienzo.submat(r2), img2Cropped, lienzo.submat(r2));
     
          
          
-         
+         /*
          Mat bb = new Mat(mat, r2);
-         bb.setTo(new Scalar(rnd.nextInt(),rnd.nextInt(),rnd.nextInt()));
-         
+         bb.setTo(new Scalar(rnd.nextInt(),rnd.nextInt(),rnd.nextInt()));         
          Core.multiply(bb,mask, bb);
          Core.multiply(lienzo.submat(r2), mask  , lienzo.submat(r2));         
          Core.add(lienzo.submat(r2), bb, lienzo.submat(r2));
+         
+         */
+         
          
         // lienzo.submat(r2).setTo(new Scalar(rnd.nextInt(),rnd.nextInt(),rnd.nextInt()));
          
