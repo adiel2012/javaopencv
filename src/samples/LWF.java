@@ -164,6 +164,8 @@ public class LWF {
         Mat lienzo = new Mat(300, 300, CV_8UC3, new Scalar(0, 0, 0));
         //Mat lienzo2 = new Mat(300, 300, CV_8UC3, new Scalar(0, 0, 0));
         double escala = 128;
+        
+       // Cara = M;
         for (int[] tri : faceTemplateTriangles) {
 //            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[0] - 1][0], gap + escala * Shape3D[tri[0] - 1][1]), new Point(gap + escala * Shape3D[tri[1] - 1][0], gap + escala * Shape3D[tri[1] - 1][1]), new Scalar(0, 255, 0));
 //            Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[1] - 1][0], gap + escala * Shape3D[tri[1] - 1][1]), new Point(gap + escala * Shape3D[tri[2] - 1][0], gap + escala * Shape3D[tri[2] - 1][1]), new Scalar(0, 255, 0));
@@ -189,9 +191,10 @@ public class LWF {
             Imgproc.line(lienzo, new Point(gap + escala * Shape3D[tri[2] - 1][0], gap + escala * Shape3D[tri[2] - 1][1]), new Point(gap + escala * Shape3D[tri[0] - 1][0], gap + escala * Shape3D[tri[0] - 1][1]), new Scalar(0, 255, 0));
 //
 
-            //  Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\" + image.getName(), lienzo);
+             // Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\" + image.getName(), lienzo);
         }
         Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\" + image.getName(), lienzo);
+       // Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\" + image.getName(), mat);
 //        Imgcodecs.imwrite(carpetaalmacen.getAbsolutePath() + "\\lateral_" + image.getName(), lienzo2);
 
     }
@@ -337,14 +340,14 @@ public class LWF {
                 new Point((int) (to[0][0] - r2.x), (int) (to[0][1] - r2.y)),
                 new Point((int) (to[1][0] - r2.x), (int) (to[1][1] - r2.y)),
                 new Point((int) (to[2][0] - r2.x), (int) (to[2][1] - r2.y)));
-        for (int i = 0; i < 3; i++) {
-           // tri1Cropped.push_back(new MatOfPoint(new Point(from[i][0] - r1.x, from[i][1] - r1.y))); //           new Point( from[i][0]  - r1.x, from[i][1]-  r1.y) );
-            //tri2Cropped.push_back(new MatOfPoint(new Point(to[i][0] - r2.x, to[i][1] - r2.y)));
-
-            // fillConvexPoly needs a vector of Point and not Point2f
-           // tri2CroppedInt.push_back(new MatOfPoint2f(new Point((int) (to[i][0] - r2.x), (int) (to[i][1] - r2.y))));
-
-        }
+//        for (int i = 0; i < 3; i++) {
+//           // tri1Cropped.push_back(new MatOfPoint(new Point(from[i][0] - r1.x, from[i][1] - r1.y))); //           new Point( from[i][0]  - r1.x, from[i][1]-  r1.y) );
+//            //tri2Cropped.push_back(new MatOfPoint(new Point(to[i][0] - r2.x, to[i][1] - r2.y)));
+//
+//            // fillConvexPoly needs a vector of Point and not Point2f
+//           // tri2CroppedInt.push_back(new MatOfPoint2f(new Point((int) (to[i][0] - r2.x), (int) (to[i][1] - r2.y))));
+//
+//        }
 
         // Apply warpImage to small rectangular patches
         Mat img1Cropped = mat.submat(r1);
@@ -355,11 +358,11 @@ public class LWF {
 
         // Apply the Affine Transform just found to the src image
         Mat img2Cropped = Mat.zeros(r2.height, r2.width, img1Cropped.type());
-        Imgproc.warpAffine(img1Cropped, img2Cropped, warpMat, img2Cropped.size(), 0, Imgproc.INTER_LINEAR, new Scalar(Core.BORDER_REFLECT101));
+        Imgproc.warpAffine(img1Cropped, img2Cropped, warpMat, img2Cropped.size(), 0, Imgproc.INTER_LINEAR, new Scalar(Core.BORDER_REFLECT_101));
 
         // Get mask by filling triangle
         Mat mask = Mat.zeros(r2.height, r2.width, CvType.CV_8UC3);    ///CV_8U    CV_32FC3
-        Imgproc.fillConvexPoly(mask, tri2CroppedInt, new Scalar(1.0, 1.0, 1.0), 16, 0);
+        Imgproc.fillConvexPoly(mask, tri2CroppedInt, new Scalar(1.0, 1.0, 1.0));
 
          // Copy triangular region of the rectangular patch to the output image
 //         Core.multiply(img2Cropped,mask, img2Cropped);
@@ -370,16 +373,18 @@ public class LWF {
 //         img2(r2) = img2(r2) + img2Cropped;
         
         
-        Core.subtract(Mat.ones(mask.height(), mask.width(), CvType.CV_8UC3), mask, mask);
+       // Core.subtract(Mat.ones(mask.height(), mask.width(), CvType.CV_8UC3), mask, mask);
        // Mat ff =   ;
         
          Core.multiply(img2Cropped,mask, img2Cropped);
          Core.multiply(lienzo.submat(r2), mask  , lienzo.submat(r2));
          //img2(r2) = img2(r2) + img2Cropped;
+         
          Core.add(lienzo.submat(r2), img2Cropped, lienzo.submat(r2));
         
         
-        //img2Cropped.copyTo(lienzo, mask);
+//        img2Cropped.copyTo(lienzo);
+//        return;
         
         
         
