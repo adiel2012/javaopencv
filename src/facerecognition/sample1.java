@@ -21,6 +21,7 @@ import org.opencv.core.MatOfRect;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
@@ -41,7 +42,7 @@ public class sample1 {
     }
 
     private static File[] get_images() {
-        urlHelen = "C:\\Users\\adiel\\Documents\\Adiel\\trabajos\\helen\\tr";
+        urlHelen = "C:\\Users\\adiel\\Documents\\Adiel\\trabajos\\helen\\trainset";
         File carpeta = new File(urlHelen);
         return carpeta.listFiles(new FilenameFilter() {
             @Override
@@ -85,7 +86,7 @@ Mat img2 = image.clone();
             
             // Draw a bounding box around each face.
             
-            double percent = 0.3;
+            double percent = 0.4;
             for (Rect rect : faceDetections.toArray()) {
                 Rect piv = rect.clone();
                 //  falta expandir
@@ -104,12 +105,14 @@ Mat img2 = image.clone();
              
             
 
-
+int r = 10;
                 boolean dentro = true;
                 for (double[] punto : puntos) {
+                    Imgproc.circle(img2, new Point(rect.x, rect.y),r, new Scalar(0, 255, 0));
+             
                     if (piv.contains(new Point(punto)) == false) {
                         dentro = false;
-                        break;
+//                        break;
                     }
                 }
                 if (dentro) {
@@ -119,7 +122,7 @@ Mat img2 = image.clone();
             }
 
         }
-        Imgcodecs.imwrite( urlHelen + "\\face"+(Math.random())+".png", img2);
+//        Imgcodecs.imwrite( urlHelen + "\\face"+(Math.random())+".png", img2);
         
         return null;
     }
@@ -140,11 +143,14 @@ Mat img2 = image.clone();
 
     private static void generate_info() {
         faceDetectors = new CascadeClassifier[]{
-            new CascadeClassifier("C:\\opencv\\sources\\data\\lbpcascades\\lbpcascade_frontalface.xml"),
-            new CascadeClassifier("C:\\opencv\\sources\\data\\lbpcascades\\lbpcascade_profileface.xml")
+            new CascadeClassifier("haarcascade_frontalface_alt_tree.xml"),
+            new CascadeClassifier("haarcascade_frontalface_alt2.xml"),
+            new CascadeClassifier("haarcascade_profileface.xml")
         };
         File[] image_files = get_images();
+        int index = 0;
         for (File image_file : image_files) {
+            System.out.println("Analizando imagen "+(++index)+" de "+image_files.length);
 //            BufferedImage img = convert_to_BufferedImage(image_file);
             File puntos_file = get_puntos_file(image_file);
             double[][] puntos = LWF.leerpuntos(puntos_file);
