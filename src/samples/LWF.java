@@ -42,9 +42,9 @@ public class LWF {
         System.out.println("Hello, OpenCV");
         // Load the native library.
 //        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        System.load("D:\\opencv\\opencv\\build\\java\\x64\\opencv_java300.dll");
+        System.load("C:\\opencv\\build\\java\\x64\\opencv_java310.dll");
 
-        String urlHelen = "D:\\borrar\\helen\\trainset";
+        String urlHelen = "C:\\Users\\adiel\\Documents\\Adiel\\trabajos\\helen\\tr";
         File carpeta = new File(urlHelen);
         File[] images = carpeta.listFiles(new FilenameFilter() {
             @Override
@@ -54,7 +54,7 @@ public class LWF {
             }
         });
 
-        File carpetaalmacen = new File("D:\\generated");
+        File carpetaalmacen = new File("C:\\trash_generated");
         if (carpetaalmacen.exists() == false) {
             carpetaalmacen.mkdir();
         }
@@ -91,7 +91,7 @@ public class LWF {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private static double[][] leerpuntos(File file) {
+    public static double[][] leerpuntos(File file) {
         double[][] res = new double[68][2];
         try {
             Scanner scan = new Scanner(file);
